@@ -2,6 +2,7 @@ import { News } from "@/interfaces/news";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
+import axios from "axios";
 
 export default function Home() {
   const [news, setNews] = useState<News[]>([]);
@@ -113,7 +114,12 @@ export default function Home() {
 
   function handleNewNews() {}
 
-  function handleNews() {
+  async function handleNews() {
+    const testMessage = await axios.post(
+      "http://localhost:3000/api/openAiRequests",
+      { text: "Hello, I am a test message" }
+    );
+    console.log(testMessage.data);
     setNews(mockNews);
   }
 

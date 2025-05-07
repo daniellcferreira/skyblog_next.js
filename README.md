@@ -9,7 +9,7 @@
 
 ---
 
-# SkyBlog
+## Descrição
 
 SkyBlog é uma aplicação web construída com Next.js e TypeScript que utiliza a API da OpenAI para gerar automaticamente notícias fictícias com base em categorias predefinidas. As informações são apresentadas dinamicamente na home e podem ser acessadas individualmente por rota dinâmica. A aplicação é estilizada com Tailwind CSS e segue uma estrutura modular, utilizando componentes reutilizáveis, renderização server-side e integração com inteligência artificial para geração de conteúdo.
 

@@ -3,130 +3,40 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { faker } from "@faker-js/faker";
 import axios from "axios";
+import { generateNews } from "@/utils/generateNews";
+import SkeletonHome from "@/components/SkeletonHome";
 
 export default function Home() {
   const [news, setNews] = useState<News[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
-  const mockNews = [
-    {
-      id: 1,
-      title: "Title 1",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 1",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/tIbIBW9.jpg",
-    },
-    {
-      id: 2,
-      title: "Title 2",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 2",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/EV9EmEV.jpg",
-    },
-    {
-      id: 3,
-      title: "Title 3",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 3",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/tIbIBW9.jpg",
-    },
-    {
-      id: 4,
-      title: "Title 4",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 4",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/EV9EmEV.jpg",
-    },
-    {
-      id: 5,
-      title: "Title 5",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 5",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/tIbIBW9.jpg",
-    },
-    {
-      id: 6,
-      title: "Title 6",
-      content: faker.lorem.paragraph(50),
-      description: faker.lorem.paragraph(),
-      date: new Date().toDateString(),
-      datetime: new Date().toISOString(),
-      category: {
-        title: "Category 6",
-      },
-      author: {
-        name: faker.person.fullName(),
-        role: faker.person.jobTitle(),
-        imageUrl: faker.image.avatar(),
-      },
-      imageUrl: "https://i.imgur.com/EV9EmEV.jpg",
-    },
-  ];
+  function handleNewNews() {
+    localStorage.removeItem("news");
+    createNews();
+  }
 
-  function handleNewNews() {}
+  async function createNews() {
+    setLoading(true);
+    const newsGerenated = await generateNews(3);
+    localStorage.setItem("news", JSON.stringify(newsGerenated));
+    setNews(newsGerenated);
+    setLoading(false);
+  }
 
   async function handleNews() {
-    const testMessage = await axios.post(
-      "http://localhost:3000/api/openAiRequests",
-      { text: "Hello, I am a test message" }
-    );
-    console.log(testMessage.data);
-    setNews(mockNews);
+    const newsString = localStorage.getItem("news");
+    if (newsString) {
+      setNews(JSON.parse(newsString));
+      return;
+    }
+    createNews();
   }
 
   useEffect(() => {
     handleNews();
-    localStorage.setItem("news", JSON.stringify(mockNews));
   }, []);
+
+  if (loading) return <SkeletonHome />
 
   return (
     <div className="bg-white py-10 sm:py-10 h-full">

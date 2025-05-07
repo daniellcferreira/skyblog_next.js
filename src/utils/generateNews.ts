@@ -16,14 +16,41 @@ export async function generateNews(length: number) {
     });
     const title = titleResponse.data;
 
-    const previewResponse = await axios.post(OPENAI_API_BASE_URL, {
-      text: `Create a preview for a blog text with the category "${title}" Unique keyword: ${randomWord}, respond with text only`
-    });
+    const [previewResponse, contentResponse] = await Promise.all([
+      axios.post(OPENAI_API_BASE_URL, {
+        text: `Create a preview text with the category "${category.subcategory}" for a blog text. Unique keyword: ${randomWord}, respond with text only`
+      }),
+      axios.post(OPENAI_API_BASE_URL, {
+        text: `Create a four-paragraph text based on this title "${title}" Unique keyword: ${randomWord}, respond with text only`
+      })
+    ]);
 
-    const contentResponse = await axios.post(OPENAI_API_BASE_URL, {
-      text: `Create a four-paragraph text based on this title "${title}" Unique keyword: ${randomWord}, respond with text only`
+    const preview = previewResponse.data;
+    const content = contentResponse.data;
+
+    news.push({
+      id: i + 1,
+      title,
+      content,
+      description: preview,
+      date: new Date().toISOString(),
+      datetime: new Date().toISOString(),
+      category: {
+        title: category.subcategory
+      },
+      author: {
+        name: faker.person.fullName(),
+        role: faker.person.jobTitle(),
+        imageUrl: faker.image.avatar(),
+      },
+      imageUrl: 
+        category.category === "technology"
+          ? "https://i.imgur.com/tIbIBw9.jpg"
+          : "https://i.imgur.com/EV9EnEV.jpg",
     });
 
   }
+
+  return news;
 
 }
